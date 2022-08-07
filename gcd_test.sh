@@ -1,30 +1,41 @@
-ns="/tmp/$$-ans"
-  4 result="/tmp/$$-result"
-    5 err="/tmp/$$-error"
-      6
-        7 #正常系
-	  8 echo "3" > ${ans}
-	    9 ./gcd.sh 9 6 > ${result}
-	     10 diff ${ans} ${result} || echo "成功" >> ${err}
-	      11
-	       12 #異常系
-	        13 #入力なし
-		 14 echo "Error!" > ${ans}
-		  15 ./gcd.sh > ${result}
-		   16 diff ${ans} ${result} || echo "入力値無のためエラー" >> ${err}
-		    17 #入力値１個
-		     18 echo "Error!" > ${ans}
-		      19 ./gcd.sh 99 > ${result}
-		       20 diff ${ans} ${result} || echo "入力値が１つのためエラー" >> ${err}
-		        21 #入力値3個
-			 22 echo "Error!" > ${ans}
-			  23 ./gcd.sh 1 2 3 > ${result}
-			   24 diff ${ans} ${result} || echo "入力値が３つのためエラー" >> ${err}
-			    25 #入力値がマイナス
-			     26 echo "Error!" > ${ans}
-			      27 ./gcd.sh 1 -1 > ${result}
-			       28 diff ${ans} ${result} || echo "入力値がマイナスの為エラー" >> ${err}
-			        29 #入力値が文字列
-				 30 echo "Error!" > ${ans}
-				  31 ./gcd.sh "qwert" > ${result}
-				   32 diff ${ans} ${result} || echo "入力値が文字列のためエラー" >> ${err}
+#!/bin/bash
+
+tmp="/tmp/$$"
+
+ERROR_EXIT(){
+  echo "$1" >&2
+  rm -f $tmp-*
+  exit 1
+}
+
+#入力値0個
+echo "値は２つ入力してください"
+./gcd.sh > $tmp-ans && ERROR_EXIT "test5-1:error"
+diff $tmp-ans $tmp-quant ||ERROR_EXIT "test5-2:error"
+
+#入力値１個
+echo "値は２つ入力してください"
+./gcd.sh 7 > $tmp-ans && ERROR_EXIT "test4-1:error" 
+diff $tmp-ans $tmp-quant || ERROR_EXIT "test4-2:error"
+
+#入力値3個
+echo "値は２つ入力してください" > $tmp-quant
+./gcd.sh 1 2 3 > $tmp-ans && ERROR_EXIT "test3-1:error"
+diff $tmp-ans $tmp-quant || ERROR_EXIT "test3-2:error"
+
+#入力値がマイナス
+echo "正の整数を入力してください" > $tmp-num
+./gcd.sh 1 -1 > $-ans && ERROR_EXIT "test2-1:error"
+diff $tmp-ans $tmp-num || ERROR_EXIT "test2-2:error"
+
+#入力値が0
+echo "正の整数を入力してください" > $tmp-num
+./gcd.sh 0 99 > $-ans && ERROR_EXIT "test6-1:error"
+diff $tmp-ans $tmp-num || ERROR_EXIT "test6-2:error"
+
+#入力値が文字列
+echo "自然数を入力してください" > $tmp-nat
+./gcd.sh "qwert" > $tmp-ans && ERROR_EXIT "test1-1: error"
+diff $tmp-ans $tmp-nat || ERROR_EXIT "test1-2:error" 
+
+rm -f $tmp-*
